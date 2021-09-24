@@ -1,6 +1,6 @@
 import { Probot, Context } from "probot";
 import axios from 'axios';
-import { BACKEND_ENDPOINT } from './constants';
+import { BACKEND_ENDPOINT, EXPLAIN_COMMAND, COMPLEXITY_COMMAND, ASK_COMMAND } from './constants';
 
 const ACCESS_TOKEN = "23xAgUh0aQBzjbxS7Gm-SeD6qSbkQ8M0";
 const SOURCE_GITHUB = 'github'
@@ -8,14 +8,14 @@ const SOURCE_GITHUB = 'github'
 export = (app: Probot) => {
   app.on("pull_request_review_comment.created", async (context: Context) => {
     const comment = context.payload.comment.body;
-    const code = context.payload.comment.diff_hunk
+    const code = context.payload.comment.diff_hunk;
     let issueComment = context.issue({
       body: "pr commentt",
     });
     
     try {
       switch(comment) {
-        case 'explain':
+        case EXPLAIN_COMMAND:
           const explainResponse = await axios.post(`${BACKEND_ENDPOINT}/function/v1/explain`, {
             code,
             outputLanguage: 'English',
@@ -26,7 +26,7 @@ export = (app: Probot) => {
             body: explainResponse.data.output
           })
           break;
-        case 'time complexity':
+        case COMPLEXITY_COMMAND:
           const complexityResponse = await axios.post(`${BACKEND_ENDPOINT}/function/v1/complexity`, {
             code,
             accessToken: ACCESS_TOKEN,
@@ -38,9 +38,9 @@ export = (app: Probot) => {
           break;
         default:
           // parse if question is asked
-          const index = comment.indexOf("figstack ask ")
+          const index = comment.indexOf(ASK_COMMAND)
           if (index != -1) {
-            const question = comment.substring(index+13)
+            const question = comment.substring(ASK_COMMAND.length + 1);
             const askResponse = await axios.post(`${BACKEND_ENDPOINT}/function/v1/ask`, {
               code,
               question,

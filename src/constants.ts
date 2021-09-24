@@ -10,6 +10,12 @@ const auth0Domain = IS_DEV ? 'https://dev-uxa1yxhj.us.auth0.com' : 'https://figs
 const responseType = 'github';
 const clientId = IS_DEV ? 'nv8BC1pmSBIw2HMNRqsd8Bkl5xwc1ipN' : 'zyVI6tCd7UQ44NCkqlx3TsulhrLtMYzm'
 const scope = 'openid profile email offline_access';
+
+
+export const EXPLAIN_COMMAND = 'explain';
+export const COMPLEXITY_COMMAND = 'complexity';
+export const ASK_COMMAND = 'ask';
+
 // Scheme is used to distinguish between VS Code and VS Code Internals
 export const getLoginURL = (uriScheme: string) => {
   const redirectUri = `${FRONTEND_ENDPOINT}/api/auth/${uriScheme}/login`;
