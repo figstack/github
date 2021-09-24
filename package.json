@@ -1,15 +1,16 @@
 {
-  "name": "figstack-bot",
+  "name": "figstack",
   "version": "1.0.0",
   "private": true,
   "description": "A Probot app",
-  "author": "Hahnbee Lee <hl985@cornell.edu>",
+  "author": "Figstack",
   "license": "ISC",
-  "homepage": "https://github.com/figstack/figstack-bot",
+  "homepage": "https://github.com/figstack/github",
+  "icon": "./images/logo.png",
   "keywords": [
-    "probot",
+    "figstack",
     "github",
-    "probot-app"
+    "probot"
   ],
   "scripts": {
     "build": "tsc",

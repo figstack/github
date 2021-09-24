@@ -1,34 +1,36 @@
-import { Probot } from "probot";
+import { Probot, Context } from "probot";
 import axios from 'axios';
 import { BACKEND_ENDPOINT } from './constants';
+
 const ACCESS_TOKEN = "23xAgUh0aQBzjbxS7Gm-SeD6qSbkQ8M0";
+const SOURCE_GITHUB = 'github'
+
 export = (app: Probot) => {
-  app.on("pull_request_review_comment.created", async (context) => {
+  app.on("pull_request_review_comment.created", async (context: Context) => {
     const comment = context.payload.comment.body;
     const code = context.payload.comment.diff_hunk
-    const source = 'github'
     let issueComment = context.issue({
       body: "pr commentt",
     });
     
     try {
       switch(comment) {
-        case 'figstack explain':
+        case 'explain':
           const explainResponse = await axios.post(`${BACKEND_ENDPOINT}/function/v1/explain`, {
             code,
             outputLanguage: 'English',
             accessToken: ACCESS_TOKEN,
-            source
+            source: SOURCE_GITHUB
           });
           issueComment = context.issue({
             body: explainResponse.data.output
           })
           break;
-        case 'figstack time complexity':
+        case 'time complexity':
           const complexityResponse = await axios.post(`${BACKEND_ENDPOINT}/function/v1/complexity`, {
             code,
             accessToken: ACCESS_TOKEN,
-            source
+            source: SOURCE_GITHUB
           });
           issueComment = context.issue({
             body: complexityResponse.data.output
@@ -43,7 +45,7 @@ export = (app: Probot) => {
               code,
               question,
               accessToken: ACCESS_TOKEN,
-              source
+              source: SOURCE_GITHUB
             });
             issueComment = context.issue({
               body: askResponse.data.output

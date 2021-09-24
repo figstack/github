@@ -1,4 +1,4 @@
-# figstack-bot
+# Figstack GitHub
 
 > A GitHub App built with [Probot](https://github.com/probot/probot) that A Probot app
 
@@ -16,15 +16,15 @@ npm start
 
 ```sh
 # 1. Build container
-docker build -t figstack-bot .
+docker build -t github .
 
 # 2. Start container
-docker run -e APP_ID=<app-id> -e PRIVATE_KEY=<pem-value> figstack-bot
+docker run -e APP_ID=<app-id> -e PRIVATE_KEY=<pem-value> github
 ```
 
 ## Contributing
 
-If you have suggestions for how figstack-bot could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
+If you have suggestions for how GitHub could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
 
 For more, check out the [Contributing Guide](CONTRIBUTING.md).
 
