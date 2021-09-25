@@ -11,7 +11,6 @@ const responseType = 'github';
 const clientId = IS_DEV ? 'nv8BC1pmSBIw2HMNRqsd8Bkl5xwc1ipN' : 'zyVI6tCd7UQ44NCkqlx3TsulhrLtMYzm'
 const scope = 'openid profile email offline_access';
 
-
 export const EXPLAIN_COMMAND = 'explain';
 export const COMPLEXITY_COMMAND = 'complexity';
 export const ASK_COMMAND = 'ask';
