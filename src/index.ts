@@ -3,19 +3,27 @@ import axios from 'axios';
 import { BACKEND_ENDPOINT, FRONTEND_ENDPOINT } from './constants';
 const SOURCE_GITHUB = 'github';
 
-const parseCode = (ogCode: string) => {
-  const trimmedCode = ogCode.trim();
-  const lines = trimmedCode.split('\n');
-  lines.splice(0,1);
+type Comment = {
+  diff_hunk: string;
+  original_start_line: number;
+  original_line: number;
+}
 
-  const parsedLines = lines.map((line) => {
+const parseCode = (comment: Comment) => {
+  const diff = comment.diff_hunk;
+  const trimmedCode = diff.trim();
+  const lines = trimmedCode.split('\n');
+  const relevantLastLinesCount = comment.original_line - (comment.original_start_line || comment.original_line) + 1;
+  const lastLines = lines.slice(relevantLastLinesCount);
+
+  const parsedLines = lastLines.map((line) => {
     const firstCharacter = line.charAt(0);
     if (firstCharacter === '-' || firstCharacter === '+') {
       return line.substring(1);
     }
 
     return line;
-  })
+  });
 
   return parsedLines.join('\n');
 }
@@ -30,7 +38,7 @@ const format = (ogComment: string, header: string, edit: string): string => {
 export = (app: Probot) => {
   app.on("pull_request_review_comment.created", async (context: Context) => {
     const comment = context.payload.comment.body.trim();
-    const code = parseCode(context.payload.comment.diff_hunk);
+    const code = parseCode(context.payload.comment);
     let issueComment = {
       body: '',
       comment_id: context.payload.comment.id,
