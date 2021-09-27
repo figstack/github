@@ -70,13 +70,13 @@ export = (app: Probot) => {
             source: SOURCE_GITHUB
           });
           let timeComplexityHeader = "⏱ Time Complexity"
-          issueComment.body = format(comment, timeComplexityHeader, complexityResponse.data.output)
+          issueComment.body = format(comment, timeComplexityHeader, "O(" + complexityResponse.data.output + ")")
           break;
         default:
           // parse if question is asked
           const index = comment.indexOf("/ask ")
           if (index != -1) {
-            const question = comment.substring(index+13)
+            const question = comment.substring(index+5)
             const askResponse = await axios.post(`${BACKEND_ENDPOINT}/function/v1/ask`, {
               code,
               question,
@@ -90,6 +90,7 @@ export = (app: Probot) => {
           break;
       }
     } catch (err: any) {
+      console.log(err?.response.data);
       if (err?.response.data?.error === 'Invalid GitHub username') {
         issueComment.body = format(comment, `[Sign in](${FRONTEND_ENDPOINT}/github/login?username=${githubUsername}) to use Figstack`, '');
       } else {
