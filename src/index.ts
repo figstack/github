@@ -14,7 +14,8 @@ const parseCode = (comment: Comment) => {
   const trimmedCode = diff.trim();
   const lines = trimmedCode.split('\n');
   const relevantLastLinesCount = comment.original_line - (comment.original_start_line || comment.original_line) + 1;
-  const lastLines = lines.slice(relevantLastLinesCount);
+  const linesToRemove = lines.length - relevantLastLinesCount
+  const lastLines = lines.slice(linesToRemove);
 
   const parsedLines = lastLines.map((line) => {
     const firstCharacter = line.charAt(0);
