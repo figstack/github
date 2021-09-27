@@ -90,7 +90,6 @@ export = (app: Probot) => {
           break;
       }
     } catch (err: any) {
-      console.log(err?.response.data);
       if (err?.response.data?.error === 'Invalid GitHub username') {
         issueComment.body = format(comment, `[Sign in](${FRONTEND_ENDPOINT}/github/login?username=${githubUsername}) to use Figstack`, '');
       } else {
