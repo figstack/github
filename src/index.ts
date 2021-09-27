@@ -23,42 +23,6 @@ export = (app: Probot) => {
     };
     
     try {
-      switch(comment) {
-        case '/explain':
-          const explainResponse = await axios.post(`${BACKEND_ENDPOINT}/function/v1/explain`, {
-            code,
-            outputLanguage: 'English',
-            accessToken: ACCESS_TOKEN,
-            source: SOURCE_GITHUB
-          });
-          let explainHeader = "Explanation"
-          issueComment.body = format(comment, explainHeader, explainResponse.data.output)
-          break;
-        case '/complexity':
-          const complexityResponse = await axios.post(`${BACKEND_ENDPOINT}/function/v1/complexity`, {
-            code,
-            accessToken: ACCESS_TOKEN,
-            source: SOURCE_GITHUB
-          });
-          let timeComplexityHeader = "Time Complexity"
-          issueComment.body = format(comment, timeComplexityHeader, complexityResponse.data.output)
-          break;
-        default:
-          // parse if question is asked
-          const index = comment.indexOf("/ask ")
-          if (index != -1) {
-            const question = comment.substring(index+13)
-            const askResponse = await axios.post(`${BACKEND_ENDPOINT}/function/v1/ask`, {
-              code,
-              question,
-              accessToken: ACCESS_TOKEN,
-              source: SOURCE_GITHUB
-            });
-            let askHeader = "Answer"
-            issueComment.body = format(comment, askHeader, askResponse.data.output)
-          }
-          break;
-      }
     } catch (err: any) {
       console.log(err)
     }
