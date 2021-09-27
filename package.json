@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "start": "PORT=3001 probot run ./lib/index.js",
+    "start": "probot run ./lib/index.js",
     "dev": "npm run build && LOG_LEVEL=trace npm start",
     "test": "jest"
   },
