@@ -1,7 +1,8 @@
-import { Probot } from "probot";
+import { Probot, Context } from "probot";
 import axios from 'axios';
 import { BACKEND_ENDPOINT } from './constants';
 const ACCESS_TOKEN = "PxyqEHcpLogOyEIUaByzdy6vyISIzhdf";
+const SOURCE_GITHUB = 'github'
 
 const format = (ogComment: String, header: String, edit: String) => {
   const formatHeader = "#### " + header + "\n"
@@ -11,10 +12,9 @@ const format = (ogComment: String, header: String, edit: String) => {
 }
 
 export = (app: Probot) => {
-  app.on("pull_request_review_comment.created", async (context) => {
+  app.on("pull_request_review_comment.created", async (context: Context) => {
     const comment = context.payload.comment.body;
     const code = context.payload.comment.diff_hunk
-    const source = 'code'
     let issueComment = {
       body: format(comment, "Explanation", "EDIT"),
       comment_id: context.payload.comment.id,
@@ -29,7 +29,7 @@ export = (app: Probot) => {
             code,
             outputLanguage: 'English',
             accessToken: ACCESS_TOKEN,
-            source
+            source: SOURCE_GITHUB
           });
           let explainHeader = "Explanation"
           issueComment.body = format(comment, explainHeader, explainResponse.data.output)
@@ -38,7 +38,7 @@ export = (app: Probot) => {
           const complexityResponse = await axios.post(`${BACKEND_ENDPOINT}/function/v1/complexity`, {
             code,
             accessToken: ACCESS_TOKEN,
-            source
+            source: SOURCE_GITHUB
           });
           let timeComplexityHeader = "Time Complexity"
           issueComment.body = format(comment, timeComplexityHeader, complexityResponse.data.output)
@@ -52,7 +52,7 @@ export = (app: Probot) => {
               code,
               question,
               accessToken: ACCESS_TOKEN,
-              source
+              source: SOURCE_GITHUB
             });
             let askHeader = "Answer"
             issueComment.body = format(comment, askHeader, askResponse.data.output)
