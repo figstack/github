@@ -19,7 +19,7 @@ const parseCode = (comment: Comment) => {
   const parsedLines = lastLines.map((line) => {
     const firstCharacter = line.charAt(0);
     if (firstCharacter === '-' || firstCharacter === '+') {
-      return line.substring(1);
+      return line.substring(1).trim();
     }
 
     return line;
