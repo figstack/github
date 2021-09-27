@@ -14,7 +14,7 @@ const format = (ogComment: String, header: String, edit: String) => {
 export = (app: Probot) => {
   app.on("pull_request_review_comment.created", async (context: Context) => {
     const comment = context.payload.comment.body;
-    const code = context.payload.comment.diff_hunk
+    const code = context.payload.comment.diff_hunk;
     let issueComment = {
       body: format(comment, "Explanation", "EDIT"),
       comment_id: context.payload.comment.id,
