@@ -1,9 +1,15 @@
 import { Probot, Context } from "probot";
 import axios from 'axios';
 import { BACKEND_ENDPOINT } from './constants';
-
-const ACCESS_TOKEN = "23xAgUh0aQBzjbxS7Gm-SeD6qSbkQ8M0";
+const ACCESS_TOKEN = "PxyqEHcpLogOyEIUaByzdy6vyISIzhdf";
 const SOURCE_GITHUB = 'github'
+
+const format = (ogComment: String, header: String, edit: String) => {
+  const formatHeader = "#### " + header + "\n"
+  return (
+    ogComment + "\n\n" + formatHeader + edit
+  )
+}
 
 export = (app: Probot) => {
   app.on("pull_request_review_comment.created", async (context: Context) => {
@@ -16,30 +22,28 @@ export = (app: Probot) => {
     
     try {
       switch(comment) {
-        case 'explain':
+        case '/explain':
           const explainResponse = await axios.post(`${BACKEND_ENDPOINT}/function/v1/explain`, {
             code,
             outputLanguage: 'English',
             accessToken: ACCESS_TOKEN,
             source: SOURCE_GITHUB
           });
-          issueComment = context.issue({
-            body: explainResponse.data.output
-          })
+          let explainHeader = "Explanation"
+          issueComment.body = format(comment, explainHeader, explainResponse.data.output)
           break;
-        case 'time complexity':
+        case '/complexity':
           const complexityResponse = await axios.post(`${BACKEND_ENDPOINT}/function/v1/complexity`, {
             code,
             accessToken: ACCESS_TOKEN,
             source: SOURCE_GITHUB
           });
-          issueComment = context.issue({
-            body: complexityResponse.data.output
-          })
+          let timeComplexityHeader = "Time Complexity"
+          issueComment.body = format(comment, timeComplexityHeader, complexityResponse.data.output)
           break;
         default:
           // parse if question is asked
-          const index = comment.indexOf("figstack ask ")
+          const index = comment.indexOf("/ask ")
           if (index != -1) {
             const question = comment.substring(index+13)
             const askResponse = await axios.post(`${BACKEND_ENDPOINT}/function/v1/ask`, {
@@ -48,9 +52,8 @@ export = (app: Probot) => {
               accessToken: ACCESS_TOKEN,
               source: SOURCE_GITHUB
             });
-            issueComment = context.issue({
-              body: askResponse.data.output
-            })
+            let askHeader = "Answer"
+            issueComment.body = format(comment, askHeader, askResponse.data.output)
           }
           break;
       }
@@ -58,7 +61,7 @@ export = (app: Probot) => {
       console.log(err)
     }
 
-    await context.octokit.issues.createComment(issueComment);
+    await context.octokit.pulls.updateReviewComment(issueComment);
   })
 
   // For more information on building apps:
