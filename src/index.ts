@@ -13,12 +13,14 @@ const format = (ogComment: String, header: String, edit: String) => {
 
 export = (app: Probot) => {
   app.on("pull_request_review_comment.created", async (context: Context) => {
-    console.log(context.payload.sender);
     const comment = context.payload.comment.body;
     const code = context.payload.comment.diff_hunk;
-    let issueComment = context.issue({
-      body: "pr commentt",
-    });
+    let issueComment = {
+      body: format(comment, "Explanation", "EDIT"),
+      comment_id: context.payload.comment.id,
+      owner: context.payload.repository.owner.login,
+      repo: context.payload.repository.name,
+    };
     
     try {
       switch(comment) {
