@@ -15,6 +15,7 @@
   "scripts": {
     "build": "tsc",
     "start": "probot run ./lib/index.js",
+    "dev": "npm run build && LOG_LEVEL=trace npm start",
     "test": "jest"
   },
   "dependencies": {

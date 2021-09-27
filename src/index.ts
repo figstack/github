@@ -7,8 +7,9 @@ const SOURCE_GITHUB = 'github'
 
 export = (app: Probot) => {
   app.on("pull_request_review_comment.created", async (context: Context) => {
+    console.log(context.payload.sender);
     const comment = context.payload.comment.body;
-    const code = context.payload.comment.diff_hunk
+    const code = context.payload.comment.diff_hunk;
     let issueComment = context.issue({
       body: "pr commentt",
     });
