@@ -83,7 +83,7 @@ export = (app: Probot) => {
       }
     } catch (err: any) {
       if (err?.response.data?.error === 'Invalid GitHub username') {
-        issueComment.body = format(comment, 'Sign in to use Figstack', `You can sign in with the link ${FRONTEND_ENDPOINT}/github/login?username=${githubUsername}`);
+        issueComment.body = format(comment, `[Sign in](${FRONTEND_ENDPOINT}/github/login?username=${githubUsername}) to use Figstack`, '');
       } else {
         issueComment.body = format(comment, 'Error', 'Unable to generate a response. Please try again later');
       }
