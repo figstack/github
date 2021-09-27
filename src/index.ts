@@ -1,6 +1,6 @@
 import { Probot, Context } from "probot";
 import axios from 'axios';
-import { BACKEND_ENDPOINT } from './constants';
+import { BACKEND_ENDPOINT, FRONTEND_ENDPOINT } from './constants';
 const SOURCE_GITHUB = 'github';
 
 const parseCode = (ogCode: string) => {
@@ -32,7 +32,7 @@ export = (app: Probot) => {
     const comment = context.payload.comment.body.trim();
     const code = parseCode(context.payload.comment.diff_hunk);
     let issueComment = {
-      body: format(comment, "Explanation", "EDIT"),
+      body: '',
       comment_id: context.payload.comment.id,
       owner: context.payload.repository.owner.login,
       repo: context.payload.repository.name,
@@ -51,7 +51,7 @@ export = (app: Probot) => {
             githubUsername,
             source: SOURCE_GITHUB
           });
-          let explainHeader = "Explanation"
+          let explainHeader = "💬 Explanation"
           issueComment.body = format(comment, explainHeader, explainResponse.data.output)
           break;
         case '/complexity':
@@ -61,7 +61,7 @@ export = (app: Probot) => {
             githubUsername,
             source: SOURCE_GITHUB
           });
-          let timeComplexityHeader = "Time Complexity"
+          let timeComplexityHeader = "⏱ Time Complexity"
           issueComment.body = format(comment, timeComplexityHeader, complexityResponse.data.output)
           break;
         default:
@@ -76,21 +76,19 @@ export = (app: Probot) => {
               githubUsername,
               source: SOURCE_GITHUB
             });
-            let askHeader = "Answer"
+            let askHeader = "🎤 Answer"
             issueComment.body = format(comment, askHeader, askResponse.data.output)
           }
           break;
       }
     } catch (err: any) {
-      console.log(err)
+      if (err?.response.data?.error === 'Invalid GitHub username') {
+        issueComment.body = format(comment, 'Sign in to use Figstack', `You can sign in with the link ${FRONTEND_ENDPOINT}/github/login?username=${githubUsername}`);
+      } else {
+        issueComment.body = format(comment, 'Error', 'Unable to generate a response. Please try again later');
+      }
     }
 
     await context.octokit.pulls.updateReviewComment(issueComment);
-  })
-
-  // For more information on building apps:
-  // https://probot.github.io/docs/
-
-  // To get your app running against GitHub, see:
-  // https://probot.github.io/docs/development/
+  });
 };
